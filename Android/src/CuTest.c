@@ -48,6 +48,11 @@ char *CuStrAlloc(int size)
 char *CuStrDeepCopy(const char *old)
 {
     LOGD("CuStrDeepCopy() Entered!\n");
+	if(!old)
+	{
+		LOGE("Input Param is NULL!\n");
+		return NULL;
+	}
     int len = strlen(old);
     char *newStr = CuStrAlloc(len + 1);
     strcpy(newStr, old);
@@ -60,8 +65,10 @@ void CuStrFree(char *str)
     LOGD("CuStrFree() Entered!\n");
 	if(!str)
 	{
-		free(str);
+		LOGE("Input Param is NULL!\n");
+		return;
 	}
+	free(str);
     LOGD("CuStrFree() Finished!\n");
 }
 /*-------------------------------------------------------------------------*
@@ -71,6 +78,11 @@ void CuStrFree(char *str)
 void CuStringConstructor(CuString *str)
 {
     LOGD("CuStringConstructor() Entered!\n");
+	if(!str)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     str->length = 0;
     str->size = STRING_MAX;
     str->buffer = (char *) malloc(sizeof(char) * str->size);
@@ -90,7 +102,11 @@ CuString *CuStringNew(void)
 void CuStringDestructor(CuString *str)
 {
     LOGD("CuStringDestructor() Entered!\n");
-    if (!str) return;
+	if(!str)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 	CuStrFree(str->buffer);
 	str->buffer = NULL;
     LOGD("CuStringDestructor() Finished!\n");
@@ -98,7 +114,11 @@ void CuStringDestructor(CuString *str)
 void CuStringDelete(CuString *str)
 {
     LOGD("CuStringDelete() Entered!\n");
-    if (!str) return;
+	if(!str)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 	CuStringDestructor(str);
     free(str);
     LOGD("CuStringDelete() Finished!\n");
@@ -107,6 +127,11 @@ void CuStringDelete(CuString *str)
 void CuStringResize(CuString *str, int newSize)
 {
     LOGD("CuStringResize() Entered!\n");
+	if(!str)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     str->buffer = (char *) realloc(str->buffer, sizeof(char) * newSize);
     str->size = newSize;
     LOGD("CuStringResize() Finished!\n");
@@ -116,11 +141,11 @@ void CuStringAppend(CuString *str, const char *text)
 {
     LOGD("CuStringAppend() Entered!\n");
     int length;
-
-    if (text == NULL)
-    {
-        text = "NULL";
-    }
+	if(!str || !text)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 
     length = strlen(text);
 
@@ -135,6 +160,11 @@ void CuStringAppend(CuString *str, const char *text)
 void CuStringAppendChar(CuString *str, char ch)
 {
     LOGD("CuStringAppendChar() Entered!\n");
+	if(!str)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     char text[2];
     text[0] = ch;
     text[1] = '\0';
@@ -145,6 +175,11 @@ void CuStringAppendChar(CuString *str, char ch)
 void CuStringAppendFormat(CuString *str, const char *format, ...)
 {
     LOGD("CuStringAppendFormat() Entered!\n");
+	if(!str || !format)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     va_list argp;
     char buf[HUGE_STRING_LEN];
     va_start(argp, format);
@@ -157,6 +192,13 @@ void CuStringAppendFormat(CuString *str, const char *format, ...)
 void CuStringInsert(CuString *str, const char *text, int pos)
 {
     LOGD("CuStringInsert() Entered!\n");
+
+	if(!str || !text)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
+	
     int length = strlen(text);
 
     if (pos > str->length)
@@ -178,6 +220,11 @@ void CuStringInsert(CuString *str, const char *text, int pos)
 void CuTestConstructor(CuTest *tc, const char *name, TestFunction function)
 {
     LOGD("CuTestConstructor() Entered!\n");
+	if(!tc || !name)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     tc->name = CuStrDeepCopy(name);
     tc->failed = 0;
     tc->ran = 0;
@@ -190,6 +237,11 @@ void CuTestConstructor(CuTest *tc, const char *name, TestFunction function)
 CuTest *CuTestNew(const char *name, TestFunction function)
 {
     LOGD("CuTestNew() Entered!\n");
+	if(!name)
+	{
+		LOGE("Input Param is NULL!\n");
+		return NULL;
+	}
     CuTest *tc = CU_ALLOC(CuTest);
     CuTestConstructor(tc, name, function);
     LOGD("CuTestNew() Finished!\n");
@@ -199,7 +251,12 @@ CuTest *CuTestNew(const char *name, TestFunction function)
 void CuTestDestructor(CuTest *tc)
 {
     LOGD("CuTestDestructor() Entered!\n");
-    if (!tc) return;
+    
+	if(!tc)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 	
 	CuStrFree(tc->name);
 	tc->name = NULL;
@@ -208,7 +265,13 @@ void CuTestDestructor(CuTest *tc)
 void CuTestDelete(CuTest *tc)
 {
     LOGD("CuTestDelete() Entered!\n");
-    if (!tc) return;
+    
+	if(!tc)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
+	
 	CuTestDestructor(tc);
     free(tc);
     LOGD("CuTestDelete() Finished!\n");
@@ -216,7 +279,13 @@ void CuTestDelete(CuTest *tc)
 void CuTestRun(CuTest *tc)
 {
     LOGD("CuTestRun() Entered, tc(%#X)!\n",(unsigned int)tc);
-	if(!tc) return;
+	
+	if(!tc)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
+	
     jmp_buf buf;
     tc->jumpBuf = &buf;
 
@@ -239,6 +308,13 @@ static void CuFailInternal(CuTest *tc, const char *file, int line, CuString *str
 {
     LOGD("CuFailInternal() Entered!\n");
     char buf[HUGE_STRING_LEN];
+	
+	if(!tc || !file || !string)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
+	
     sprintf(buf, "%s:%d: ", file, line);
     CuStringInsert(string, buf, 0);
     tc->failed = 1;
@@ -256,6 +332,11 @@ void CuFail_Line(CuTest *tc, const char *file, int line, const char *message2, c
 {
     LOGD("CuFail_Line() Entered!\n");
     CuString string;
+	if(!tc || !file || !message)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     CuStringConstructor(&string);
 
     if (message2 != NULL)
@@ -273,7 +354,15 @@ void CuFail_Line(CuTest *tc, const char *file, int line, const char *message2, c
 void CuAssert_Line(CuTest *tc, const char *file, int line, const char *message, int condition)
 {
     LOGD("CuAssert_Line() Entered!\n");
-    if (condition) return;
+	if(!tc || !file || !message)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
+    if (condition) 
+	{
+		return;
+	}
 
     CuFail_Line(tc, file, line, NULL, message);
     LOGD("CuAssert_Line() Finished!\n");
@@ -284,6 +373,11 @@ void CuAssertStrEquals_LineMsg(CuTest *tc, const char *file, int line, const cha
 {
     LOGD("CuAssertStrEquals_LineMsg() Entered!\n");
     CuString string;
+	if(!tc || !file || !message)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 
     if ((expected == NULL && actual == NULL) ||
         (expected != NULL && actual != NULL &&
@@ -314,8 +408,16 @@ void CuAssertIntEquals_LineMsg(CuTest *tc, const char *file, int line, const cha
 {
     LOGD("CuAssertIntEquals_LineMsg() Entered!\n");
     char buf[STRING_MAX];
+	if(!tc || !file || !message)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 
-    if (expected == actual) return;
+    if (expected == actual) 
+	{
+		return;
+	}
 
     sprintf(buf, "expected <%d> but was <%d>", expected, actual);
     CuFail_Line(tc, file, line, message, buf);
@@ -328,7 +430,16 @@ void CuAssertDblEquals_LineMsg(CuTest *tc, const char *file, int line, const cha
     LOGD("CuAssertDblEquals_LineMsg() Entered!\n");
     char buf[STRING_MAX];
 
-    if (fabs(expected - actual) <= delta) return;
+	if(!tc || !file || !message)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
+	
+    if (fabs(expected - actual) <= delta) 
+	{
+		return;
+	}
 
     sprintf(buf, "expected <%f> but was <%f>", expected, actual);
     CuFail_Line(tc, file, line, message, buf);
@@ -340,8 +451,17 @@ void CuAssertPtrEquals_LineMsg(CuTest *tc, const char *file, int line, const cha
 {
     LOGD("CuAssertPtrEquals_LineMsg() Entered!\n");
     char buf[STRING_MAX];
+	
+	if(!tc || !file || !message)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 
-    if (expected == actual) return;
+    if (expected == actual) 
+	{
+		return;
+	}
 
     sprintf(buf, "expected pointer <0x%p> but was <0x%p>", expected, actual);
     CuFail_Line(tc, file, line, message, buf);
@@ -356,6 +476,11 @@ void CuAssertPtrEquals_LineMsg(CuTest *tc, const char *file, int line, const cha
 void CuSuiteConstructor(CuSuite *testSuite)
 {
     LOGD("CuSuiteConstructor() Entered!\n");
+	if(!testSuite)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     testSuite->count = 0;
     testSuite->failCount = 0;
     memset(testSuite->list, 0, sizeof(testSuite->list));
@@ -374,7 +499,13 @@ CuSuite *CuSuiteNew(void)
 void CuSuiteDestructor(CuSuite *testSuite)
 {
     LOGD("CuSuiteDestructor() Entered!\n");
-    if (!testSuite) return;
+    
+	if(!testSuite)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
+	
     int n;
 
     for (n = 0; n < testSuite->count; n++)
@@ -392,7 +523,13 @@ void CuSuiteDestructor(CuSuite *testSuite)
 void CuSuiteDelete(CuSuite *testSuite)
 {
     LOGD("CuSuiteDelete() Entered!\n");
-    if (!testSuite) return;
+    
+	if(!testSuite)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
+	
   	CuSuiteDestructor(testSuite);
     free(testSuite);
     LOGD("CuSuiteDelete() Finished!\n");
@@ -401,6 +538,11 @@ void CuSuiteDelete(CuSuite *testSuite)
 void CuSuiteShallowAdd(CuSuite *testSuite, CuTest *testCase)
 {
     LOGD("CuSuiteShallowAdd() Entered!\n");
+	if(!testSuite || !testCase)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     assert(testSuite->count < MAX_TEST_CASES);
     testSuite->list[testSuite->count] = testCase;
     testSuite->count++;
@@ -410,6 +552,11 @@ void CuSuiteShallowAdd(CuSuite *testSuite, CuTest *testCase)
 void CuSuiteDeepAdd(CuSuite *testSuite, CuTest *testCase)
 {
     LOGD("CuSuiteDeepAdd() Entered!\n");
+	if(!testSuite || !testCase)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
     assert(testSuite->count < MAX_TEST_CASES);
     CuTest *tc = CU_ALLOC(CuTest);
 	memcpy(tc, testCase, sizeof(*testCase));
@@ -427,6 +574,11 @@ void CuSuiteRobSuite(CuSuite *testSuite, CuSuite *testSuite2)
 {
     LOGD("CuSuiteRobSuite() Entered!\n");
     int i;
+	if(!testSuite || !testSuite2)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 
     for (i = 0 ; i < testSuite2->count ; ++i)
     {
@@ -442,6 +594,11 @@ void CuSuiteRun(CuSuite *testSuite)
 {
     LOGD("CuSuiteRun() Entered!\n");
     int i;
+	if(!testSuite)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 
     for (i = 0 ; i < testSuite->count ; ++i)
     {
@@ -462,6 +619,11 @@ void CuSuiteSummary(CuSuite *testSuite, CuString *summary)
 {
     LOGD("CuSuiteSummary() Entered!\n");
     int i;
+	if(!testSuite || !summary)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 
     for (i = 0 ; i < testSuite->count ; ++i)
     {
@@ -478,6 +640,11 @@ void CuSuiteDetails(CuSuite *testSuite, CuString *details)
     LOGD("CuSuiteDetails() Entered!\n");
     int i;
     int failCount = 0;
+	if(!testSuite || !details)
+	{
+		LOGE("Input Param is NULL!\n");
+		return;
+	}
 
     if (testSuite->failCount == 0)
     {
