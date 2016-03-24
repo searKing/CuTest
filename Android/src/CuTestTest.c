@@ -55,7 +55,7 @@ static void X_CompareAsserts(CuTest* tc, const char *file, int line, const char*
 		}
 	}
 
-	CuAssert_Line(tc, file, line, message, !mismatch);
+	CuTestAssert_Line(tc, file, line, message, !mismatch);
 }
 
 /*-------------------------------------------------------------------------*
